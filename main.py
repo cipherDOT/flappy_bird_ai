@@ -1,8 +1,6 @@
 
-
 import pygame
 import os
-import random
 
 pygame.font.init()
 
@@ -18,15 +16,12 @@ BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bg.p
 pygame.display.set_caption('Flappy bird')
 pygame.display.set_icon(BIRD_IMG)
 
-# -------------------------------------------------------------------------------------------------------------------------#
-
 def blitRotateCenter(surf, image, topleft, angle):
     rotated_image = pygame.transform.rotate(image, angle)
     new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
     surf.blit(rotated_image, new_rect)
 
 # -------------------------------------------------------------------------------------------------------------------------#
-
 class Bird:
     def __init__(self, x, y, vel, img):
         self.x = x
@@ -53,18 +48,24 @@ class Bird:
         self.tick_count += 1
 
         # for downward acceleration
-        self.vel = self.vel + self.acc * self.tick_count  # calculate vel
+        # v = u + at
+        # we are updating the velocity value and we increment the 
+        # bird's y position w.r.t the velocity.
+        self.vel = self.vel + self.acc * self.tick_count
 
         # terminal velocity
         if self.vel >= self.terminal_vel:
             self.vel = (self.vel/abs(self.vel)) * self.terminal_vel
 
+        # changing the bird's position w.r.t velocity
         self.y += self.vel
 
-        if self.vel < 0:  # tilt up
+        # tilt up
+        if self.vel < 0:  
             if self.tilt < self.max_rotation:
                 self.tilt = self.max_rotation
-        else:  # tilt down
+        # tilt down
+        else:  
             if self.tilt > -self.max_rotation:
                 self.tilt -= self.rotation_velocity
         

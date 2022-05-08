@@ -1,2 +1,2 @@
-# flappy_bird_ai
+# Flappy Bird AI
 A flappy bird AI developed using python and Genetic Algorithm 

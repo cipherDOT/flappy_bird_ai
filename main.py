@@ -11,12 +11,14 @@ D_HEIGHT = 800
 GEN = 0
 
 display = pygame.display.set_mode((D_WIDTH, D_HEIGHT))
-BIRD_IMG =  pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bird2.png')))
+BIRD_IMG =  pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bird.png')))
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'pipe.png')))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'base.png')))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bg.png')))
 pygame.display.set_caption('Flappy bird')
 pygame.display.set_icon(BIRD_IMG)
+
+# -------------------------------------------------------------------------------------------------------------------------#
 
 def blitRotateCenter(surf, image, topleft, angle):
     rotated_image = pygame.transform.rotate(image, angle)
@@ -24,6 +26,7 @@ def blitRotateCenter(surf, image, topleft, angle):
     surf.blit(rotated_image, new_rect)
 
 # -------------------------------------------------------------------------------------------------------------------------#
+
 class Bird:
     def __init__(self, x, y, vel, img):
         self.x = x

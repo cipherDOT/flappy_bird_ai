@@ -33,6 +33,8 @@ class Pipe:
 
     def detect_collision(self, bird):
         bird_mask = bird.get_mask()
+        
+        
         top_mask = pygame.mask.from_surface(self.top_pipe)
         bottom_mask = pygame.mask.from_surface(self.bottom_pipe)
         top_offset = (self.x - bird.x, self.top_height - round(bird.y))

@@ -193,7 +193,6 @@ class Game:
 
             for pipe in self.pipes:
                 if pipe.detect_collision(self.bird):
-                    print("Game over ra thailee")
                     self.reset()
 
             draw_window(display, self.bird, self.pipes, self.bases, self.score, fps)

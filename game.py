@@ -1,13 +1,17 @@
+from dis import dis
 import pygame
-pygame.font.init()
+import random
 from bird import Bird
 from pipe import Pipe
 from base import Base
+from population import Population
 from settings import *
 
 class Game:
     def __init__(self):
-        self.bird  = Bird(30, D_HEIGHT // 2, 0, BIRD_IMG)
+        # self.bird  = Bird(30, D_HEIGHT // 2, 0, BIRD_IMG)
+        self.birds = Population()
+        self.birds.populate()
         self.pipes = [Pipe(PIPE_IMG)]
         self.bases = [Base(0, D_HEIGHT - 100, BASE_IMG), Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG)]
         self.score = 0
@@ -18,20 +22,42 @@ class Game:
         while loop:
             self.clock.tick(120)
             fps = int(self.clock.get_fps())
+
+            if all([bird.dead for bird in self.birds.population]):
+                self.birds.breed()
+                self.reset()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     loop = False
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.bird.flap()
+                        print(self.birds.population[0].think())
 
-                    if event.key == pygame.K_d:
-                        print(fps)
-            
+            for bird in self.birds.population:
+                bird.move()
+                bird.look(self.pipes[0])
+                bird.age += 1
+                bird.fitness = bird.calc_fitness()
+                # chance_to_flap = random.random()
+                chance_to_flap = bird.think()
+                # print(chance_to_flap)
+                if chance_to_flap >= 0.5:
+                    bird.flap()
+                else:
+                    bird.vel = 3
+
+                if bird.y >= D_HEIGHT:
+                    bird.dead = True
+
+                for pipe in self.pipes:
+                    if pipe.detect_collision(bird):
+                        bird.dead = True
+
             add_pipe = False
             passed_pipes = []
-            self.bird.move()
+            
             for pipe in self.pipes:
                 pipe.move()
                 if pipe.has_passed_screen():
@@ -45,14 +71,11 @@ class Game:
                 self.pipes.remove(pipe)
                 self.score += 1
 
-            for pipe in self.pipes:
-                if pipe.detect_collision(self.bird):
-                    self.reset()
-
             self.draw_window(display, fps)
 
     def reset(self):
-        self.bird  = Bird(30, D_HEIGHT // 2, 0, BIRD_IMG)
+        # self.birds = Population()
+        # self.birds.populate()
         self.pipes = [Pipe(PIPE_IMG)]
         self.bases = [Base(0, D_HEIGHT - 100, BASE_IMG), Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG)]
         self.score = 0
@@ -61,6 +84,7 @@ class Game:
         score_text = ARCADE_FONT.render("Score " + str(self.score), 1, (255, 255, 255))
         fps_text = ARCADE_FONT.render("fps " + str(fps), 1, (255, 255, 255))
         win.blit(BG_IMG, (0, 0))
+
 
         for pipe in self.pipes:
             pipe.draw(win)
@@ -74,7 +98,11 @@ class Game:
                 self.bases.append(Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG))
                 self.bases.remove(base)
 
-        self.bird.draw(win)
+        for bird in self.birds.population:
+            if not bird.dead:
+                bird.draw(win)
+                bird.debug(win)
+
         win.blit(score_text, (10, 10))
         win.blit(fps_text, (150, 10))
         pygame.display.flip()

@@ -1,8 +1,8 @@
 
 
 # todo:
-#       [ ] add collision detection
-#       [ ] add game class
+#       [x] add collision detection
+#       [x] add game class
 #       [ ] add genes
 #       [ ] add genetic evolution algorithm 
 # ----------------------------------------------- required imports ------------------------------------------------------ #
@@ -23,7 +23,7 @@ display = pygame.display.set_mode((D_WIDTH, D_HEIGHT))
 BIRD_IMG =  pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bird.png'))).convert_alpha()
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'pipe.png'))).convert_alpha()
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'base.png'))).convert_alpha()
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bg.png'))).convert_alpha()
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('assets', 'bg - dark.png'))).convert_alpha()
 ARCADE_FONT = pygame.font.Font(os.path.join('assets', 'ARCADECLASSIC.TTF'), 24)
 pygame.display.set_caption('Flappy bird')
 pygame.display.set_icon(BIRD_IMG)
@@ -105,7 +105,7 @@ class Pipe:
         self.cleared = False
 
     def set_height(self):
-        height = random.randint(150, 650)
+        height = random.randint(175, 625)
         return height
 
     def move(self):
@@ -193,6 +193,7 @@ class Game:
 
             for pipe in self.pipes:
                 if pipe.detect_collision(self.bird):
+                    print("Game over ra thailee")
                     self.reset()
 
             draw_window(display, self.bird, self.pipes, self.bases, self.score, fps)

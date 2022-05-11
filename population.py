@@ -22,13 +22,13 @@ class Population(object):
             for _ in range(fitness_ratio):
                 mating_pool.append(genome)
 
+        # print(f"Size of mating pool: {len(mating_pool)}")
         return mating_pool
 
     def breed(self):
         generation_dead = all([genome.dead for genome in self.population])
         if generation_dead:
             mating_pool = self.natural_selection()
-            print(mating_pool[0])
             children = Population()
 
             for _ in range(POPULATION_SIZE):
@@ -41,3 +41,6 @@ class Population(object):
 
             self.population = children.population
             self.generation += 1
+
+    def display_best_gene(self):
+        print([i for i in self.population if not i.dead][0].gene)

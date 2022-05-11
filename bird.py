@@ -84,21 +84,20 @@ class Bird:
         for i in range(GENE_LENGTH):
             mutation_probability = round(random.uniform(0, 1), 2)
             if mutation_probability == MUTATION_RATE:
-                mutated_gene = random.uniform(-0.05, 0.05)
+                mutated_gene = random.uniform(-0.005, 0.005)
                 self.gene[i] += mutated_gene
 
     def look(self, pipe):
         self.visual_inputs = []
-        self.visual_inputs.append(self.y / D_HEIGHT)
+        self.visual_inputs.append(1 - (self.y / D_HEIGHT))
         self.visual_inputs.append(self.vel / self.terminal_vel)
-        self.visual_inputs.append(pipe.x / D_WIDTH)
-        self.visual_inputs.append(pipe.height / D_HEIGHT)
+        self.visual_inputs.append(1 - (pipe.x / D_WIDTH))
+        self.visual_inputs.append(1 - (pipe.height / D_HEIGHT))
 
     def debug(self, win):
-        # if len(self.visual_inputs) == 0:
-        #     print("[NO VISUALS]")
-        # else:
-        pygame.draw.line(win, (255, 0, 0), (self.x, self.y), (self.visual_inputs[2], self.visual_inputs[3]), 5)
+        # pygame.draw.line(win, (255, 0, 0), (self.x, self.y), ((1 - self.visual_inputs[2]) * D_WIDTH, self.visual_inputs[3] * D_HEIGHT), 5)
+        pygame.draw.line(win, (255, 0, 0), (self.x, self.y), ((-1 - self.visual_inputs[2]) * D_WIDTH, self.y), 5)
+        pygame.draw.line(win, (255, 0, 0), (self.x, self.y), (self.x, (-1 - self.visual_inputs[3]) * D_HEIGHT), 5)
 
     def think(self):
         out = 0

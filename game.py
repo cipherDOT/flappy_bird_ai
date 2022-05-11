@@ -1,6 +1,4 @@
-
 import pygame
-import random
 from bird import Bird
 from pipe import Pipe
 from base import Base
@@ -16,11 +14,12 @@ class Game:
         self.bases = [Base(0, D_HEIGHT - 100, BASE_IMG), Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG)]
         self.score = 0
         self.clock = pygame.time.Clock()
+        self.frame_rate = 60
 
     def run(self):
         loop = True
         while loop:
-            self.clock.tick(120)
+            self.clock.tick(self.frame_rate)
             fps = int(self.clock.get_fps())
 
             if all([bird.dead for bird in self.birds.population]):
@@ -33,7 +32,7 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        print(self.birds.population[0].think())
+                        print(self.birds.display_best_gene())
 
             for bird in self.birds.population:
                 bird.move()
@@ -48,7 +47,7 @@ class Game:
                 else:
                     bird.vel = 3
 
-                if bird.y >= D_HEIGHT:
+                if bird.y >= self.bases[0].y:
                     bird.dead = True
 
                 for pipe in self.pipes:
@@ -73,18 +72,12 @@ class Game:
 
             self.draw_window(display, fps)
 
-    def reset(self):
-        # self.birds = Population()
-        # self.birds.populate()
-        self.pipes = [Pipe(PIPE_IMG)]
-        self.bases = [Base(0, D_HEIGHT - 100, BASE_IMG), Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG)]
-        self.score = 0
-
     def draw_window(self, win, fps):
         score_text = ARCADE_FONT.render("Score " + str(self.score), 1, (255, 255, 255))
         fps_text = ARCADE_FONT.render("fps " + str(fps), 1, (255, 255, 255))
+        gen_text = ARCADE_FONT.render("gen " + str(self.birds.generation), 1, (255, 255, 255))
+        alive_text = ARCADE_FONT.render("alive " + str(len([i for i in self.birds.population if not i.dead])), 1, (255, 255, 255))
         win.blit(BG_IMG, (0, 0))
-
 
         for pipe in self.pipes:
             pipe.draw(win)
@@ -101,10 +94,17 @@ class Game:
         for bird in self.birds.population:
             if not bird.dead:
                 bird.draw(win)
-                bird.debug(win)
+                bird.debug(win)                
 
         win.blit(score_text, (10, 10))
         win.blit(fps_text, (150, 10))
+        win.blit(gen_text, (270, 10))
+        win.blit(alive_text, (370, 10))
         pygame.display.flip()
 
-
+    def reset(self):
+        # self.birds = Population()
+        # self.birds.populate()
+        self.pipes = [Pipe(PIPE_IMG)]
+        self.bases = [Base(0, D_HEIGHT - 100, BASE_IMG), Base(D_WIDTH, D_HEIGHT - 100, BASE_IMG)]
+        self.score = 0
